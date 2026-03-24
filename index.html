@@ -720,39 +720,327 @@ label { font-size: 0.73rem; color: var(--text2); display: block; margin-bottom: 
 
 <!-- ═══════════════ LEARN PAGE ═══════════════ -->
 <div class="page" id="page-learn" style="flex-direction:column;padding:20px;gap:16px;">
-  <div style="max-width:900px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
+  <div style="max-width:960px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
+
+    <!-- 1. WHAT IS THE SELECTION PROBLEM -->
     <div class="section">
-      <div class="collapsible-header open" onclick="toggleCollapsible(this)"><span>📖 Algorithm Overview</span><span class="collapsible-arrow">▶</span></div>
+      <div class="collapsible-header open" onclick="toggleCollapsible(this)"><span>📖 What is the Selection Problem?</span><span class="collapsible-arrow">▶</span></div>
       <div class="collapsible-body">
-        <div class="overview-text">
-          <p style="margin-bottom:10px;"><strong>The Selection Problem:</strong> Given an unsorted array of n elements, find the <strong>k-th smallest element</strong> (the k-th order statistic).</p>
-          <p style="margin-bottom:10px;"><strong>Naive approach:</strong> Sort in <code>O(n log n)</code> and return <code>A[k-1]</code>. Wasteful — we don't need the full array sorted.</p>
-          <p style="margin-bottom:10px;"><strong>Quickselect</strong> (Tony Hoare, 1961) solves this in expected <code>O(n)</code> using Divide &amp; Conquer. Like Quicksort, it partitions around a pivot. Unlike Quicksort, it only recurses into the partition <em>containing</em> the k-th element.</p>
-          <p><strong>Key idea:</strong> After partitioning, the pivot is at its correct sorted position <code>p</code>. If k == p+1, done. If k &lt; p+1, recurse left. If k &gt; p+1, recurse right.</p>
+        <p style="margin-bottom:12px;">Given an <strong>unsorted array</strong> of <em>n</em> numbers, find the element that would be at position <strong>k</strong> if the array were sorted. This is called the <strong>k-th order statistic</strong>.</p>
+        <!-- Diagram: naive vs quickselect -->
+        <svg viewBox="0 0 820 130" style="width:100%;max-width:820px;display:block;margin:0 auto 14px;" xmlns="http://www.w3.org/2000/svg">
+          <!-- Naive -->
+          <rect x="10" y="10" width="370" height="110" rx="8" fill="rgba(255,107,53,0.07)" stroke="rgba(255,107,53,0.3)" stroke-width="1"/>
+          <text x="195" y="30" text-anchor="middle" fill="#ff6b35" font-size="11" font-weight="700" font-family="Consolas,monospace">NAIVE APPROACH — O(n log n)</text>
+          <rect x="30" y="42" width="80" height="28" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+          <text x="70" y="61" text-anchor="middle" fill="var(--text)" font-size="10" font-family="Consolas,monospace">Unsorted</text>
+          <text x="128" y="61" text-anchor="middle" fill="var(--text2)" font-size="18">→</text>
+          <rect x="148" y="42" width="80" height="28" rx="5" fill="rgba(255,107,53,0.15)" stroke="rgba(255,107,53,0.4)" stroke-width="1"/>
+          <text x="188" y="61" text-anchor="middle" fill="#ff6b35" font-size="10" font-family="Consolas,monospace">Sort All</text>
+          <text x="246" y="61" text-anchor="middle" fill="var(--text2)" font-size="18">→</text>
+          <rect x="266" y="42" width="90" height="28" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+          <text x="311" y="61" text-anchor="middle" fill="var(--text)" font-size="10" font-family="Consolas,monospace">Return A[k]</text>
+          <text x="195" y="95" text-anchor="middle" fill="rgba(255,107,53,0.8)" font-size="10" font-family="Consolas,monospace">⚠ Sorts ENTIRE array just to find one element</text>
+          <text x="195" y="113" text-anchor="middle" fill="rgba(255,107,53,0.6)" font-size="9" font-family="Consolas,monospace">Wasted work: all other n-1 sorted positions unused</text>
+          <!-- Quickselect -->
+          <rect x="440" y="10" width="370" height="110" rx="8" fill="rgba(79,255,176,0.07)" stroke="rgba(79,255,176,0.3)" stroke-width="1"/>
+          <text x="625" y="30" text-anchor="middle" fill="#4fffb0" font-size="11" font-weight="700" font-family="Consolas,monospace">QUICKSELECT — O(n) average</text>
+          <rect x="458" y="42" width="80" height="28" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+          <text x="498" y="61" text-anchor="middle" fill="var(--text)" font-size="10" font-family="Consolas,monospace">Unsorted</text>
+          <text x="556" y="61" text-anchor="middle" fill="var(--text2)" font-size="18">→</text>
+          <rect x="576" y="42" width="90" height="28" rx="5" fill="rgba(79,255,176,0.15)" stroke="rgba(79,255,176,0.4)" stroke-width="1"/>
+          <text x="621" y="61" text-anchor="middle" fill="#4fffb0" font-size="10" font-family="Consolas,monospace">Partition</text>
+          <text x="684" y="61" text-anchor="middle" fill="var(--text2)" font-size="18">→</text>
+          <rect x="704" y="42" width="90" height="28" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+          <text x="749" y="61" text-anchor="middle" fill="var(--text)" font-size="10" font-family="Consolas,monospace">Recurse 1 side</text>
+          <text x="625" y="95" text-anchor="middle" fill="rgba(79,255,176,0.8)" font-size="10" font-family="Consolas,monospace">✓ Discards half the array each step</text>
+          <text x="625" y="113" text-anchor="middle" fill="rgba(79,255,176,0.6)" font-size="9" font-family="Consolas,monospace">Only searches the side that contains k</text>
+        </svg>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px;">
+          <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:1.3rem;font-weight:800;color:var(--accent);font-family:Consolas,monospace;">k = 1</div>
+            <div style="font-size:0.72rem;color:var(--text2);margin-top:4px;">Minimum element</div>
+          </div>
+          <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:1.3rem;font-weight:800;color:var(--accent);font-family:Consolas,monospace;">k = n/2</div>
+            <div style="font-size:0.72rem;color:var(--text2);margin-top:4px;">Median element</div>
+          </div>
+          <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:1.3rem;font-weight:800;color:var(--accent);font-family:Consolas,monospace;">k = n</div>
+            <div style="font-size:0.72rem;color:var(--text2);margin-top:4px;">Maximum element</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- 2. HOW PARTITION WORKS -->
     <div class="section">
-      <div class="collapsible-header open" onclick="toggleCollapsible(this)"><span>🔍 Worked Example: Find 3rd Smallest in [7, 2, 5, 1, 8, 3]</span><span class="collapsible-arrow">▶</span></div>
+      <div class="collapsible-header open" onclick="toggleCollapsible(this)"><span>⚙️ How Lomuto Partition Works (Step by Step)</span><span class="collapsible-arrow">▶</span></div>
       <div class="collapsible-body">
-        <div class="worked-step"><div class="worked-num">1</div><div class="worked-content"><strong>Initial:</strong> array = <code>[7, 2, 5, 1, 8, 3]</code>, k=3. Pivot = last element = <code>3</code>.</div></div>
-        <div class="worked-step"><div class="worked-num">2</div><div class="worked-content"><strong>Partition:</strong> Move all &lt; 3 to left, &gt; 3 to right → <code>[2, 1, 3, 7, 5, 8]</code>. Pivot 3 lands at index 2 (rank 3).</div></div>
-        <div class="worked-step"><div class="worked-num">3</div><div class="worked-content"><strong>Check:</strong> Pivot rank = 3 = k. <strong style="color:var(--accent3)">Match! Answer is 3.</strong></div></div>
-        <div class="worked-step"><div class="worked-num">4</div><div class="worked-content"><strong>Verify:</strong> Sorted = [1, 2, 3, 5, 7, 8]. 3rd smallest = 3 ✓. Never fully sorted the array!</div></div>
-        <div class="concept-box good" style="margin-top:4px;"><h4>Key takeaway</h4><p>We found the answer in one partition pass — much faster than sorting the whole array.</p></div>
+        <p style="margin-bottom:14px;">Partition rearranges the array so that all elements <strong style="color:#00d4ff">smaller than pivot</strong> go left, and all elements <strong style="color:#ff6b35">larger than pivot</strong> go right. The pivot ends up at its <strong style="color:#4fffb0">final sorted position</strong>.</p>
+
+        <!-- Partition diagram: pointer movement -->
+        <div style="font-size:0.75rem;color:var(--text2);margin-bottom:8px;font-family:Consolas,monospace;">Example: Partition [7, 2, 5, 1, 8, 3] — Pivot = 3 (last element)</div>
+        <svg viewBox="0 0 820 340" style="width:100%;max-width:820px;display:block;margin:0 auto 14px;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arr2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--text2)"/></marker>
+            <marker id="arr-cyan" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#00d4ff"/></marker>
+            <marker id="arr-green" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4fffb0"/></marker>
+          </defs>
+
+          <!-- Step labels on left -->
+          <text x="8" y="52" fill="var(--text2)" font-size="10" font-family="Consolas,monospace">Step 0</text>
+          <text x="8" y="122" fill="var(--text2)" font-size="10" font-family="Consolas,monospace">Step 1</text>
+          <text x="8" y="192" fill="var(--text2)" font-size="10" font-family="Consolas,monospace">Step 2</text>
+          <text x="8" y="262" fill="var(--text2)" font-size="10" font-family="Consolas,monospace">Final</text>
+
+          <!-- STEP 0: initial state -->
+          <!-- cells -->
+          <g transform="translate(70,28)">
+            <!-- 7 -->
+            <rect x="0" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="45" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">7</text>
+            <!-- 2 -->
+            <rect x="100" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="145" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">2</text>
+            <!-- 5 -->
+            <rect x="200" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="245" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">5</text>
+            <!-- 1 -->
+            <rect x="300" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="345" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">1</text>
+            <!-- 8 -->
+            <rect x="400" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="445" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">8</text>
+            <!-- 3 pivot -->
+            <rect x="500" y="0" width="90" height="36" rx="5" fill="rgba(161,99,255,0.25)" stroke="rgba(161,99,255,0.6)" stroke-width="2"/>
+            <text x="545" y="23" text-anchor="middle" fill="#a163ff" font-size="14" font-weight="700" font-family="Consolas,monospace">3</text>
+            <!-- pivot label -->
+            <text x="545" y="52" text-anchor="middle" fill="#a163ff" font-size="9" font-family="Consolas,monospace">pivot</text>
+            <!-- i pointer -->
+            <text x="-15" y="23" text-anchor="middle" fill="#00d4ff" font-size="9" font-family="Consolas,monospace">i=-1</text>
+            <!-- j pointer -->
+            <text x="45" y="52" text-anchor="middle" fill="#ff6b35" font-size="9" font-family="Consolas,monospace">j=0</text>
+          </g>
+
+          <!-- STEP 1: j=0 (7>3, skip), j=1 (2<3, i++, swap) → i=0 -->
+          <g transform="translate(70,98)">
+            <rect x="0" y="0" width="90" height="36" rx="5" fill="rgba(79,255,176,0.12)" stroke="rgba(79,255,176,0.4)" stroke-width="1.5"/>
+            <text x="45" y="23" text-anchor="middle" fill="#4fffb0" font-size="14" font-weight="700" font-family="Consolas,monospace">2</text>
+            <rect x="100" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="145" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">7</text>
+            <rect x="200" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="245" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">5</text>
+            <rect x="300" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="345" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">1</text>
+            <rect x="400" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="445" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">8</text>
+            <rect x="500" y="0" width="90" height="36" rx="5" fill="rgba(161,99,255,0.25)" stroke="rgba(161,99,255,0.6)" stroke-width="2"/>
+            <text x="545" y="23" text-anchor="middle" fill="#a163ff" font-size="14" font-weight="700" font-family="Consolas,monospace">3</text>
+            <text x="45" y="52" text-anchor="middle" fill="#00d4ff" font-size="9" font-family="Consolas,monospace">i=0 ↑</text>
+            <text x="145" y="52" text-anchor="middle" fill="#ff6b35" font-size="9" font-family="Consolas,monospace">j=1</text>
+            <text x="30" y="-6" fill="#4fffb0" font-size="8" font-family="Consolas,monospace">2&lt;3 → swap!</text>
+          </g>
+
+          <!-- STEP 2: j=3 (1<3, swap with i=1) -->
+          <g transform="translate(70,168)">
+            <rect x="0" y="0" width="90" height="36" rx="5" fill="rgba(79,255,176,0.12)" stroke="rgba(79,255,176,0.4)" stroke-width="1.5"/>
+            <text x="45" y="23" text-anchor="middle" fill="#4fffb0" font-size="14" font-weight="700" font-family="Consolas,monospace">2</text>
+            <rect x="100" y="0" width="90" height="36" rx="5" fill="rgba(79,255,176,0.12)" stroke="rgba(79,255,176,0.4)" stroke-width="1.5"/>
+            <text x="145" y="23" text-anchor="middle" fill="#4fffb0" font-size="14" font-weight="700" font-family="Consolas,monospace">1</text>
+            <rect x="200" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="245" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">5</text>
+            <rect x="300" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="345" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">7</text>
+            <rect x="400" y="0" width="90" height="36" rx="5" fill="rgba(255,255,255,0.05)" stroke="var(--border)" stroke-width="1"/>
+            <text x="445" y="23" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700" font-family="Consolas,monospace">8</text>
+            <rect x="500" y="0" width="90" height="36" rx="5" fill="rgba(161,99,255,0.25)" stroke="rgba(161,99,255,0.6)" stroke-width="2"/>
+            <text x="545" y="23" text-anchor="middle" fill="#a163ff" font-size="14" font-weight="700" font-family="Consolas,monospace">3</text>
+            <text x="145" y="52" text-anchor="middle" fill="#00d4ff" font-size="9" font-family="Consolas,monospace">i=1 ↑</text>
+            <text x="30" y="-6" fill="#4fffb0" font-size="8" font-family="Consolas,monospace">1&lt;3 → swap!</text>
+          </g>
+
+          <!-- FINAL: pivot placed at i+1=2 -->
+          <g transform="translate(70,238)">
+            <rect x="0" y="0" width="90" height="36" rx="5" fill="rgba(79,255,176,0.12)" stroke="rgba(79,255,176,0.35)" stroke-width="1"/>
+            <text x="45" y="23" text-anchor="middle" fill="#4fffb0" font-size="14" font-weight="700" font-family="Consolas,monospace">2</text>
+            <rect x="100" y="0" width="90" height="36" rx="5" fill="rgba(79,255,176,0.12)" stroke="rgba(79,255,176,0.35)" stroke-width="1"/>
+            <text x="145" y="23" text-anchor="middle" fill="#4fffb0" font-size="14" font-weight="700" font-family="Consolas,monospace">1</text>
+            <rect x="200" y="0" width="90" height="36" rx="5" fill="rgba(161,99,255,0.35)" stroke="rgba(161,99,255,0.8)" stroke-width="2.5"/>
+            <text x="245" y="23" text-anchor="middle" fill="#a163ff" font-size="16" font-weight="800" font-family="Consolas,monospace">3</text>
+            <rect x="300" y="0" width="90" height="36" rx="5" fill="rgba(255,107,53,0.1)" stroke="rgba(255,107,53,0.3)" stroke-width="1"/>
+            <text x="345" y="23" text-anchor="middle" fill="#ff6b35" font-size="14" font-weight="700" font-family="Consolas,monospace">5</text>
+            <rect x="400" y="0" width="90" height="36" rx="5" fill="rgba(255,107,53,0.1)" stroke="rgba(255,107,53,0.3)" stroke-width="1"/>
+            <text x="445" y="23" text-anchor="middle" fill="#ff6b35" font-size="14" font-weight="700" font-family="Consolas,monospace">7</text>
+            <rect x="500" y="0" width="90" height="36" rx="5" fill="rgba(255,107,53,0.1)" stroke="rgba(255,107,53,0.3)" stroke-width="1"/>
+            <text x="545" y="23" text-anchor="middle" fill="#ff6b35" font-size="14" font-weight="700" font-family="Consolas,monospace">8</text>
+            <!-- labels -->
+            <text x="72" y="52" text-anchor="middle" fill="#4fffb0" font-size="9" font-family="Consolas,monospace">← smaller than 3</text>
+            <text x="245" y="52" text-anchor="middle" fill="#a163ff" font-size="9" font-family="Consolas,monospace">rank 3 ✓</text>
+            <text x="445" y="52" text-anchor="middle" fill="#ff6b35" font-size="9" font-family="Consolas,monospace">larger than 3 →</text>
+          </g>
+        </svg>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
+          <div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:8px;padding:10px;">
+            <div style="font-size:0.72rem;font-weight:700;color:var(--accent);margin-bottom:6px;">Lomuto Partition Rules</div>
+            <div style="font-size:0.71rem;color:var(--text2);line-height:1.8;">
+              1. Pivot = last element A[right]<br>
+              2. i = left − 1 (boundary of "small" zone)<br>
+              3. For j = left to right−1:<br>
+              &nbsp;&nbsp;&nbsp;• If A[j] ≤ pivot: i++, swap A[i] ↔ A[j]<br>
+              4. Swap A[i+1] ↔ A[right] (place pivot)<br>
+              5. Return i+1 (pivot's final index)
+            </div>
+          </div>
+          <div style="background:rgba(79,255,176,0.05);border:1px solid rgba(79,255,176,0.2);border-radius:8px;padding:10px;">
+            <div style="font-size:0.72rem;font-weight:700;color:#4fffb0;margin-bottom:6px;">Pointer Meanings</div>
+            <div style="font-size:0.71rem;color:var(--text2);line-height:1.8;">
+              <span style="color:#a163ff">■</span> <strong>pivot</strong> — reference value at A[right]<br>
+              <span style="color:#00d4ff">■</span> <strong>i</strong> — right boundary of "smaller" zone<br>
+              <span style="color:#ff6b35">■</span> <strong>j</strong> — current element being checked<br>
+              <span style="color:#4fffb0">■</span> <strong>green cells</strong> — confirmed smaller than pivot<br>
+              <span style="color:#ff6b35">■</span> <strong>orange cells</strong> — confirmed larger than pivot
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- 3. DECISION LOGIC DIAGRAM -->
+    <div class="section">
+      <div class="collapsible-header open" onclick="toggleCollapsible(this)"><span>🔀 QuickSelect Decision Logic</span><span class="collapsible-arrow">▶</span></div>
+      <div class="collapsible-body">
+        <p style="margin-bottom:12px;">After every partition, QuickSelect compares k to the pivot's position and decides where to go next. This is what makes it <strong>O(n)</strong> — it only ever follows one path.</p>
+        <svg viewBox="0 0 820 280" style="width:100%;max-width:820px;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="da" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--text2)"/></marker>
+            <marker id="da-g" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#4fffb0"/></marker>
+            <marker id="da-c" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#00d4ff"/></marker>
+            <marker id="da-o" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#ff6b35"/></marker>
+          </defs>
+          <!-- Start -->
+          <rect x="320" y="10" width="180" height="36" rx="18" fill="rgba(0,212,255,0.15)" stroke="rgba(0,212,255,0.5)" stroke-width="1.5"/>
+          <text x="410" y="33" text-anchor="middle" fill="var(--accent)" font-size="12" font-weight="700" font-family="Consolas,monospace">Partition Array</text>
+          <!-- arrow down -->
+          <line x1="410" y1="46" x2="410" y2="78" stroke="var(--text2)" stroke-width="1.5" marker-end="url(#da)"/>
+          <!-- Decision diamond -->
+          <polygon points="410,80 530,118 410,156 290,118" fill="rgba(161,99,255,0.12)" stroke="rgba(161,99,255,0.5)" stroke-width="1.5"/>
+          <text x="410" y="112" text-anchor="middle" fill="#a163ff" font-size="11" font-weight="700" font-family="Consolas,monospace">Compare k</text>
+          <text x="410" y="128" text-anchor="middle" fill="#a163ff" font-size="11" font-family="Consolas,monospace">vs pivot rank</text>
+          <!-- Three outcomes -->
+          <!-- Left: k < rank -->
+          <line x1="290" y1="118" x2="120" y2="118" stroke="#00d4ff" stroke-width="1.5" marker-end="url(#da-c)"/>
+          <text x="200" y="110" text-anchor="middle" fill="#00d4ff" font-size="10" font-family="Consolas,monospace">k &lt; rank</text>
+          <rect x="20" y="98" width="100" height="40" rx="8" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.4)" stroke-width="1.5"/>
+          <text x="70" y="115" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="700" font-family="Consolas,monospace">Recurse</text>
+          <text x="70" y="130" text-anchor="middle" fill="#00d4ff" font-size="10" font-family="Consolas,monospace">LEFT side</text>
+          <!-- Right: k > rank -->
+          <line x1="530" y1="118" x2="700" y2="118" stroke="#ff6b35" stroke-width="1.5" marker-end="url(#da-o)"/>
+          <text x="620" y="110" text-anchor="middle" fill="#ff6b35" font-size="10" font-family="Consolas,monospace">k &gt; rank</text>
+          <rect x="700" y="98" width="100" height="40" rx="8" fill="rgba(255,107,53,0.1)" stroke="rgba(255,107,53,0.4)" stroke-width="1.5"/>
+          <text x="750" y="115" text-anchor="middle" fill="#ff6b35" font-size="10" font-weight="700" font-family="Consolas,monospace">Recurse</text>
+          <text x="750" y="130" text-anchor="middle" fill="#ff6b35" font-size="10" font-family="Consolas,monospace">RIGHT side</text>
+          <!-- Down: k == rank -->
+          <line x1="410" y1="156" x2="410" y2="196" stroke="#4fffb0" stroke-width="1.5" marker-end="url(#da-g)"/>
+          <text x="430" y="182" fill="#4fffb0" font-size="10" font-family="Consolas,monospace">k == rank</text>
+          <rect x="310" y="198" width="200" height="40" rx="8" fill="rgba(79,255,176,0.15)" stroke="rgba(79,255,176,0.5)" stroke-width="2"/>
+          <text x="410" y="215" text-anchor="middle" fill="#4fffb0" font-size="12" font-weight="800" font-family="Consolas,monospace">🎯 FOUND!</text>
+          <text x="410" y="230" text-anchor="middle" fill="#4fffb0" font-size="10" font-family="Consolas,monospace">Pivot is the answer</text>
+          <!-- Recurse arrows back to top -->
+          <path d="M70,98 Q70,30 320,22" stroke="#00d4ff" stroke-width="1" stroke-dasharray="5,3" fill="none" marker-end="url(#da-c)"/>
+          <path d="M750,98 Q750,30 500,22" stroke="#ff6b35" stroke-width="1" stroke-dasharray="5,3" fill="none" marker-end="url(#da-o)"/>
+          <!-- Discard labels -->
+          <text x="70" y="160" text-anchor="middle" fill="rgba(255,107,53,0.6)" font-size="9" font-family="Consolas,monospace">right half</text>
+          <text x="70" y="171" text-anchor="middle" fill="rgba(255,107,53,0.6)" font-size="9" font-family="Consolas,monospace">discarded ✕</text>
+          <text x="750" y="160" text-anchor="middle" fill="rgba(0,212,255,0.6)" font-size="9" font-family="Consolas,monospace">left half</text>
+          <text x="750" y="171" text-anchor="middle" fill="rgba(0,212,255,0.6)" font-size="9" font-family="Consolas,monospace">discarded ✕</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 4. WORKED EXAMPLE -->
+    <div class="section">
+      <div class="collapsible-header open" onclick="toggleCollapsible(this)"><span>🔍 Full Worked Example: Find 3rd Smallest in [7, 2, 5, 1, 8, 3]</span><span class="collapsible-arrow">▶</span></div>
+      <div class="collapsible-body">
+        <div class="worked-step"><div class="worked-num">1</div><div class="worked-content"><strong>Start:</strong> array = <code>[7, 2, 5, 1, 8, 3]</code>, k=3. Pivot = last element = <code>3</code>. Search space = [0..5].</div></div>
+        <div class="worked-step"><div class="worked-num">2</div><div class="worked-content"><strong>Partition [0..5]:</strong> Walk j from 0→4. Elements smaller than 3: <code>2</code> (at j=1), <code>1</code> (at j=3). Swap them left. Then place pivot 3 at index 2.<br>Result: <code>[2, 1, <span style="color:#a163ff">3</span>, 7, 5, 8]</code> → pivot at index 2 = rank 3.</div></div>
+        <div class="worked-step"><div class="worked-num">3</div><div class="worked-content"><strong>Compare:</strong> k=3, pivot rank=3. <strong style="color:#4fffb0">k == rank → DONE! Answer = 3.</strong></div></div>
+        <div class="worked-step"><div class="worked-num">4</div><div class="worked-content"><strong>Verify:</strong> Sorted = [1, 2, <span style="color:#4fffb0">3</span>, 5, 7, 8]. The 3rd smallest is indeed 3 ✓</div></div>
+
+        <!-- SVG: show what gets discarded -->
+        <svg viewBox="0 0 700 90" style="width:100%;max-width:700px;display:block;margin:10px auto 0;" xmlns="http://www.w3.org/2000/svg">
+          <text x="350" y="16" text-anchor="middle" fill="var(--text2)" font-size="11" font-family="Consolas,monospace">After partition — only ONE check needed, both halves never touched again</text>
+          <!-- left half -->
+          <rect x="20" y="28" width="180" height="40" rx="6" fill="rgba(79,255,176,0.08)" stroke="rgba(79,255,176,0.3)" stroke-width="1"/>
+          <text x="110" y="54" text-anchor="middle" fill="#4fffb0" font-size="12" font-weight="700" font-family="Consolas,monospace">[2, 1]</text>
+          <text x="110" y="80" text-anchor="middle" fill="rgba(79,255,176,0.5)" font-size="9" font-family="Consolas,monospace">all &lt; pivot (discarded)</text>
+          <!-- pivot -->
+          <rect x="260" y="22" width="80" height="50" rx="6" fill="rgba(161,99,255,0.25)" stroke="rgba(161,99,255,0.7)" stroke-width="2"/>
+          <text x="300" y="54" text-anchor="middle" fill="#a163ff" font-size="18" font-weight="800" font-family="Consolas,monospace">3</text>
+          <text x="300" y="80" text-anchor="middle" fill="#a163ff" font-size="9" font-family="Consolas,monospace">rank 3 = k ✓</text>
+          <!-- right half -->
+          <rect x="400" y="28" width="280" height="40" rx="6" fill="rgba(255,107,53,0.08)" stroke="rgba(255,107,53,0.3)" stroke-width="1"/>
+          <text x="540" y="54" text-anchor="middle" fill="#ff6b35" font-size="12" font-weight="700" font-family="Consolas,monospace">[7, 5, 8]</text>
+          <text x="540" y="80" text-anchor="middle" fill="rgba(255,107,53,0.5)" font-size="9" font-family="Consolas,monospace">all &gt; pivot (discarded)</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 5. COMPLEXITY -->
+    <div class="section">
+      <div class="collapsible-header open" onclick="toggleCollapsible(this)"><span>📊 Time Complexity — Why O(n)?</span><span class="collapsible-arrow">▶</span></div>
+      <div class="collapsible-body">
+        <svg viewBox="0 0 820 160" style="width:100%;max-width:820px;display:block;margin:0 auto 14px;" xmlns="http://www.w3.org/2000/svg">
+          <!-- Average case: geometric series -->
+          <text x="10" y="18" fill="var(--accent3)" font-size="11" font-weight="700" font-family="Consolas,monospace">AVERAGE CASE — Work per level (ideal: pivot always splits in half)</text>
+          <!-- Level bars -->
+          <rect x="10" y="26" width="800" height="22" rx="3" fill="rgba(0,212,255,0.2)" stroke="rgba(0,212,255,0.4)" stroke-width="1"/>
+          <text x="415" y="42" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Consolas,monospace">Level 1: n comparisons (full array)</text>
+          <rect x="10" y="54" width="400" height="22" rx="3" fill="rgba(0,212,255,0.15)" stroke="rgba(0,212,255,0.3)" stroke-width="1"/>
+          <text x="215" y="70" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Consolas,monospace">Level 2: n/2 comparisons</text>
+          <rect x="10" y="82" width="200" height="22" rx="3" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.25)" stroke-width="1"/>
+          <text x="115" y="98" text-anchor="middle" fill="var(--accent)" font-size="10" font-family="Consolas,monospace">Level 3: n/4</text>
+          <rect x="10" y="110" width="100" height="22" rx="3" fill="rgba(0,212,255,0.07)" stroke="rgba(0,212,255,0.2)" stroke-width="1"/>
+          <text x="65" y="126" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Consolas,monospace">n/8</text>
+          <rect x="10" y="138" width="50" height="16" rx="3" fill="rgba(0,212,255,0.05)" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+          <text x="35" y="150" text-anchor="middle" fill="var(--accent)" font-size="8" font-family="Consolas,monospace">…</text>
+          <!-- Formula -->
+          <text x="500" y="90" fill="var(--text2)" font-size="11" font-family="Consolas,monospace">Total = n + n/2 + n/4 + n/8 + …</text>
+          <text x="500" y="110" fill="var(--text2)" font-size="11" font-family="Consolas,monospace">     = n × (1 + ½ + ¼ + …)</text>
+          <text x="500" y="130" fill="#4fffb0" font-size="13" font-weight="800" font-family="Consolas,monospace">     = n × 2  =  O(n) ✓</text>
+        </svg>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+          <div style="background:rgba(79,255,176,0.07);border:1px solid rgba(79,255,176,0.25);border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:1.1rem;font-weight:800;color:#4fffb0;font-family:Consolas,monospace;">O(n)</div>
+            <div style="font-size:0.7rem;color:var(--text2);margin-top:4px;">Average case<br>Random input</div>
+          </div>
+          <div style="background:rgba(255,107,53,0.07);border:1px solid rgba(255,107,53,0.25);border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:1.1rem;font-weight:800;color:#ff6b35;font-family:Consolas,monospace;">O(n²)</div>
+            <div style="font-size:0.7rem;color:var(--text2);margin-top:4px;">Worst case<br>Sorted input + last pivot</div>
+          </div>
+          <div style="background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.25);border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:1.1rem;font-weight:800;color:var(--accent);font-family:Consolas,monospace;">O(1)</div>
+            <div style="font-size:0.7rem;color:var(--text2);margin-top:4px;">Space<br>In-place, no extra array</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. KEY CONCEPTS & MISTAKES -->
     <div class="section">
       <div class="collapsible-header open" onclick="toggleCollapsible(this)"><span>⚡ Key Concepts &amp; Common Mistakes</span><span class="collapsible-arrow">▶</span></div>
       <div class="collapsible-body" style="display:flex;flex-direction:column;gap:8px;">
-        <div class="concept-box good"><h4>✓ Quickselect vs Quicksort</h4><p>Quicksort recurses BOTH sides → O(n log n). Quickselect recurses ONE side → O(n) average. Same partition, different recursion strategy.</p></div>
-        <div class="concept-box"><h4>✓ k is 1-indexed Rank</h4><p>k=1 = minimum, k=n = maximum. After partition, pivot at 0-indexed position p has rank p+1.</p></div>
-        <div class="concept-box warn"><h4>✗ Wrong k after right recursion</h4><p>When recursing right (k > pivotPos+1), adjust k relative to new subarray: new k = k − pivotPos − 1.</p></div>
-        <div class="concept-box warn"><h4>✗ Assuming sorted output</h4><p>Quickselect does NOT sort the array. Only the k-th element is at its correct position. Others are partially partitioned.</p></div>
-        <div class="concept-box"><h4>✓ Randomized Pivot Selection</h4><p>Choose pivot randomly to avoid worst case. This makes O(n²) extremely unlikely and guarantees O(n) expected time.</p></div>
-        <div class="concept-box"><h4>✓ Median of Medians</h4><p>Advanced variant guarantees O(n) worst case by choosing a good pivot deterministically. Higher constant factor but provably optimal.</p></div>
+        <div class="concept-box good"><h4>✓ Quickselect vs Quicksort</h4><p>Quicksort recurses <strong>BOTH</strong> sides after partition → O(n log n). Quickselect recurses <strong>ONE</strong> side only → O(n) average. They use the exact same partition function — only the recursion strategy differs.</p></div>
+        <div class="concept-box"><h4>✓ k is 1-indexed Rank</h4><p>k=1 means the smallest (minimum). k=n means the largest (maximum). After partition, the pivot at 0-indexed position <code>p</code> has rank <code>p+1</code>. So if k=3, you're looking for the pivot at index 2.</p></div>
+        <div class="concept-box warn"><h4>✗ Wrong k after right recursion</h4><p>When recursing right (k &gt; pivotPos+1), you must adjust k relative to the new subarray: <code>new k = k − pivotPos − 1</code>. Forgetting this gives the wrong element.</p></div>
+        <div class="concept-box warn"><h4>✗ Assuming sorted output</h4><p>QuickSelect does <strong>NOT</strong> sort the array. Only the k-th element ends up at its correct position. All other elements are partially rearranged but not sorted.</p></div>
+        <div class="concept-box"><h4>✓ Real-World Uses</h4><p>Finding the median in O(n) · Top-K results in databases · Percentile calculations (e.g. 90th percentile load time) · Order book algorithms in finance · Graphics: finding median-cut for color quantization.</p></div>
+        <div class="concept-box"><h4>✓ Median of Medians</h4><p>An advanced variant that guarantees <strong>O(n) worst case</strong> by choosing a provably good pivot deterministically. It divides the array into groups of 5, finds medians of each group, then recursively finds the median of those medians. Higher constant factor than randomized QuickSelect but provably optimal.</p></div>
       </div>
     </div>
+
   </div>
 </div>
 
